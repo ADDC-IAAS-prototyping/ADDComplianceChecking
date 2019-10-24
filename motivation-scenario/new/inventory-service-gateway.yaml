@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: inventory-service-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: inventory-service
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - inventory-service-gateway
+  http:
+  - match:
+    - uri:
+        exact: /inventory
+    route:
+    - destination:
+        host: inventory-service
+        port:
+          number: 5000
